@@ -18,7 +18,7 @@ class GLObject {
     const positions = Primitives.createCube({
       x: 0, y: 0, z: 0
     }, {
-      x: 1, y: 2, z: 2.5
+      x: 1, y: 1, z: 1
     })
     this.verticesBuffer = this.renderer.getGL().createBuffer()
     this.renderer.getGL().bindBuffer(this.renderer.getGL().ARRAY_BUFFER, this.verticesBuffer)
