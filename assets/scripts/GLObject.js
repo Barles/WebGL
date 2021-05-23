@@ -6,14 +6,16 @@ class GLObject {
     this.verticesBuffer = null
     this.uvsBuffer = null
     this.indicesBuffer = null
+    this.normalsBuffer = null
     this.texture = null
-    this.translation = { x: 0, y: 0, z: -5 }
+    this.translation = { x: 0, y: 0, z: -3 }
     this.rotation = { x: 0, y: 0, z: 0 }
 
     this.addTexture(texturePath)
     this.fillVertices()
     this.fillUVS()
     this.fillIndices()
+    this.fillNormals()
   }
 
   addTexture(url) {
@@ -100,11 +102,56 @@ class GLObject {
     this.renderer.getGL().bufferData(this.renderer.getGL().ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), this.renderer.getGL().STATIC_DRAW)
   }
 
+  fillNormals() {
+    const normals = [
+      // Front
+       0.0,  0.0,  1.0,
+       0.0,  0.0,  1.0,
+       0.0,  0.0,  1.0,
+       0.0,  0.0,  1.0,
+
+      // Back
+       0.0,  0.0, -1.0,
+       0.0,  0.0, -1.0,
+       0.0,  0.0, -1.0,
+       0.0,  0.0, -1.0,
+
+      // Top
+       0.0,  1.0,  0.0,
+       0.0,  1.0,  0.0,
+       0.0,  1.0,  0.0,
+       0.0,  1.0,  0.0,
+
+      // Bottom
+       0.0, -1.0,  0.0,
+       0.0, -1.0,  0.0,
+       0.0, -1.0,  0.0,
+       0.0, -1.0,  0.0,
+
+      // Right
+       1.0,  0.0,  0.0,
+       1.0,  0.0,  0.0,
+       1.0,  0.0,  0.0,
+       1.0,  0.0,  0.0,
+
+      // Left
+      -1.0,  0.0,  0.0,
+      -1.0,  0.0,  0.0,
+      -1.0,  0.0,  0.0,
+      -1.0,  0.0,  0.0
+    ]
+
+    this.normalsBuffer = this.renderer.getGL().createBuffer();
+    this.renderer.getGL().bindBuffer(this.renderer.getGL().ARRAY_BUFFER, this.normalsBuffer);
+    this.renderer.getGL().bufferData(this.renderer.getGL().ARRAY_BUFFER, new Float32Array(normals), this.renderer.getGL().STATIC_DRAW);
+  }
+
   getObject() {
     return {
       verticesBuffer: this.verticesBuffer,
       uvsBuffer: this.uvsBuffer,
       indicesBuffer: this.indicesBuffer,
+      normalsBuffer: this.normalsBuffer,
       texture: this.texture,
       translation: this.translation,
       rotation: this.rotation

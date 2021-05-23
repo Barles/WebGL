@@ -7,8 +7,15 @@
       </b-col>
     </b-row>
     <b-row>
-      <b-col>
-        {{ fps }}
+      <b-col class="bg-white">
+        FPS: {{ fps }}
+        <b-form-input v-model="dirLight.rotateX" type="range" min="0" max="360" step="0.5" @update="updateDirLight" />
+        <b-form-input v-model="dirLight.rotateY" type="range" min="0" max="360" step="0.5" @update="updateDirLight" />
+        <b-form-input v-model="dirLight.rotateZ" type="range" min="0" max="360" step="0.5" @update="updateDirLight" />
+        <!-- <b-form-input v-model="dirLight.colorR" type="range" min="0" max="5" step="0.01" @update="updateDirLight" />
+        <b-form-input v-model="dirLight.colorG" type="range" min="0" max="5" step="0.01" @update="updateDirLight" />
+        <b-form-input v-model="dirLight.colorB" type="range" min="0" max="5" step="0.01" @update="updateDirLight" /> -->
+        <b-form-input v-model="dirLight.color" type="color" @update="updateDirLight" />
       </b-col>
     </b-row>
   </b-container>
@@ -22,7 +29,16 @@ export default {
     return {
       app: null,
       fps: 0,
-      fs: false
+      fs: false,
+      dirLight: {
+        rotateX: 1,
+        rotateY: 1,
+        rotateZ: 1,
+        colorR: .5,
+        colorG: .5,
+        colorB: .5,
+        color: '#ffffff'
+      }
     }
   },
   mounted() {
@@ -36,6 +52,21 @@ export default {
     this.app = this.app.destroy()
   },
   methods: {
+    hexToRgb(h){return['0x'+h[1]+h[2]|0,'0x'+h[3]+h[4]|0,'0x'+h[5]+h[6]|0]},
+    updateDirLight() {
+      this.app.dirLight.setRotationX(this.dirLight.rotateX * (Math.PI / 180))
+      this.app.dirLight.setRotationY(this.dirLight.rotateY * (Math.PI / 180))
+      this.app.dirLight.setRotationZ(this.dirLight.rotateZ * (Math.PI / 180))
+
+      const color = this.hexToRgb(this.dirLight.color)
+      console.log(color[0] / 255)
+      console.log(color[1] / 255)
+      console.log(color[2] / 255)
+
+      this.app.dirLight.setColorR(color[0] / 255)
+      this.app.dirLight.setColorG(color[1] / 255)
+      this.app.dirLight.setColorB(color[2] / 255)
+    },
     toggleFS() {
       const elem = document.documentElement
       if (!this.fs) {

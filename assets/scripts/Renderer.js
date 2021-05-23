@@ -10,7 +10,7 @@ class Renderer {
     this.projectionMatrix = this.initProjectionMatrix()
   }
 
-  render(objects) {
+  render(objects, lights) {
     // clear and set the viewport and other global state (enable depth testing, turn on culling, etc..)
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0)
     this.gl.clearDepth(1.0)
@@ -24,6 +24,15 @@ class Renderer {
       // call gl.useProgram for the program needed to draw.
       this.gl.useProgram(this.programInfo.program)
       this.projectionMatrix = this.initProjectionMatrix()
+
+      for (const light of lights) {
+        if (light.getType() == 'ambientLight') {
+          this.gl.uniform3fv(this.programInfo.uniformLocations.ambientColor, light.getColor())
+        } else if (light.getType() == 'directionalLight') {
+          this.gl.uniform3fv(this.programInfo.uniformLocations.directionalColor, light.getColor())
+          this.gl.uniform3fv(this.programInfo.uniformLocations.directionalDir, light.getDirection())
+        }
+      }
 
       // Compute ModelViewMatrix
       const modelViewMatrix = mat4.create()
@@ -43,10 +52,6 @@ class Renderer {
       this.gl.vertexAttribPointer(this.programInfo.attribLocations.vertexPosition, 3, this.gl.FLOAT, false, 0, 0)
       this.gl.enableVertexAttribArray(this.programInfo.attribLocations.vertexPosition)
 
-      // this.gl.bindBuffer(this.gl.ARRAY_BUFFER, object.colorsBuffer)
-      // this.gl.vertexAttribPointer(this.programInfo.attribLocations.vertexColor, 4, this.gl.FLOAT, false, 0, 0)
-      // this.gl.enableVertexAttribArray(this.programInfo.attribLocations.vertexColor)
-
       if(object.texture != null) {
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, object.uvsBuffer)
         this.gl.vertexAttribPointer(this.programInfo.attribLocations.textureCoord, 2, this.gl.FLOAT, false, 0, 0)
@@ -56,6 +61,16 @@ class Renderer {
         this.gl.bindTexture(this.gl.TEXTURE_2D, object.texture)
         this.gl.uniform1i(this.programInfo.uniformLocations.uSampler, 0)
       }
+
+      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, object.normalsBuffer)
+      this.gl.vertexAttribPointer(this.programInfo.attribLocations.verticesNormals, 3, this.gl.FLOAT, false, 0, 0)
+      this.gl.enableVertexAttribArray(this.programInfo.attribLocations.verticesNormals)
+
+      let normalMatrix = mat4.create()
+      mat4.invert(normalMatrix, modelViewMatrix)
+      mat4.transpose(normalMatrix, normalMatrix)
+
+      this.gl.uniformMatrix4fv(this.programInfo.uniformLocations.normalMatrix, false, normalMatrix)
 
       this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, object.indicesBuffer)
       this.gl.drawElements(this.gl.TRIANGLES, 36, this.gl.UNSIGNED_SHORT, 0)
@@ -82,19 +97,24 @@ class Renderer {
       program: shaderProgram,
       attribLocations: {
         vertexPosition: this.gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
-        textureCoord: this.gl.getAttribLocation(shaderProgram, 'aTextureCoord')
+        textureCoord: this.gl.getAttribLocation(shaderProgram, 'aTextureCoord'),
+        verticesNormals: this.gl.getAttribLocation(shaderProgram, 'aVertexNormal')
       },
       uniformLocations: {
         projectionMatrix: this.gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
+        normalMatrix: this.gl.getUniformLocation(shaderProgram, 'uNormalMatrix'),
         modelViewMatrix: this.gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
-        uSampler: this.gl.getUniformLocation(shaderProgram, 'uSampler')
+        uSampler: this.gl.getUniformLocation(shaderProgram, 'uSampler'),
+        ambientColor: this.gl.getUniformLocation(shaderProgram, 'uAmbientColor'),
+        directionalColor: this.gl.getUniformLocation(shaderProgram, 'uDirectionalLightColor'),
+        directionalDir: this.gl.getUniformLocation(shaderProgram, 'uDirectionalLightDirection'),
       }
     }
     return programInfo
   }
 
   initProjectionMatrix() {
-    const fov = 45 * Math.PI / 80
+    const fov = 35 * Math.PI / 80
     const aspect = this.gl.canvas.clientWidth / this.gl.canvas.clientHeight
     const zNear = 0.1
     const zFar = 1000.0
