@@ -1,5 +1,7 @@
 # WebGL
 
+[![wakatime](https://wakatime.com/badge/github/Barles/WebGL.svg)](https://wakatime.com/badge/github/Barles/WebGL)
+
 ## Build Setup
 
 ```bash
