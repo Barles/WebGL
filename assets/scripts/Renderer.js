@@ -57,6 +57,16 @@ class Renderer {
         this.gl.uniform1i(this.programInfo.uniformLocations.uSampler, 0)
       }
 
+      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, object.normalsBuffer)
+      this.gl.vertexAttribPointer(this.programInfo.attribLocations.verticesNormals, 3, this.gl.FLOAT, false, 0, 0)
+      this.gl.enableVertexAttribArray(this.programInfo.attribLocations.verticesNormals)
+
+      let normalMatrix = mat4.create()
+      mat4.invert(normalMatrix, modelViewMatrix)
+      mat4.transpose(normalMatrix, normalMatrix)
+
+      this.gl.uniformMatrix4fv(this.programInfo.uniformLocations.normalMatrix, false, normalMatrix)
+
       this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, object.indicesBuffer)
       this.gl.drawElements(this.gl.TRIANGLES, 36, this.gl.UNSIGNED_SHORT, 0)
     }
@@ -82,10 +92,12 @@ class Renderer {
       program: shaderProgram,
       attribLocations: {
         vertexPosition: this.gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
-        textureCoord: this.gl.getAttribLocation(shaderProgram, 'aTextureCoord')
+        textureCoord: this.gl.getAttribLocation(shaderProgram, 'aTextureCoord'),
+        verticesNormals: this.gl.getAttribLocation(shaderProgram, 'aVertexNormal')
       },
       uniformLocations: {
         projectionMatrix: this.gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
+        normalMatrix: this.gl.getUniformLocation(shaderProgram, 'uNormalMatrix'),
         modelViewMatrix: this.gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
         uSampler: this.gl.getUniformLocation(shaderProgram, 'uSampler')
       }

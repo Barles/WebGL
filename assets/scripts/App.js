@@ -10,7 +10,7 @@ class App extends events.EventEmitter {
     const object = new GLObject(this.renderer, require('~/assets/textures/Bricks/Bricks059_1K_Color.png'))
     const object2 = new GLObject(this.renderer, require('~/assets/textures/Bricks/Bricks059_1K_Color.png'))
     object2.translation.x = -3
-    const object3 = new GLObject(this.renderer, '~/assets/textures/Bricks/Bricks059_1K_Color.png')
+    const object3 = new GLObject(this.renderer, require('~/assets/textures/Bricks/Bricks059_1K_Color.png'))
     object3.translation.x = 3
 
     this.time = 0
