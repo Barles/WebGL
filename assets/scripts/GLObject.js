@@ -8,7 +8,7 @@ class GLObject {
     this.indicesBuffer = null
     this.normalsBuffer = null
     this.texture = null
-    this.translation = { x: 0, y: 0, z: -5 }
+    this.translation = { x: 0, y: 0, z: -3 }
     this.rotation = { x: 0, y: 0, z: 0 }
 
     this.addTexture(texturePath)

@@ -7,6 +7,10 @@ uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 uniform mat4 uNormalMatrix;
 
+uniform highp vec3 uAmbientColor;
+uniform highp vec3 uDirectionalLightColor;
+uniform highp vec3 uDirectionalLightDirection;
+
 varying highp vec2 vTextureCoord;
 varying highp vec3 vLighting;
 
@@ -14,13 +18,12 @@ void main() {
   gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
   vTextureCoord = aTextureCoord;
 
-  highp vec3 ambientLight = vec3(0.3, 0.3, 0.3);
-  highp vec3 directionalLightColor = vec3(1, 1, 1);
-  highp vec3 directionalLightDirection = normalize(vec3(0.85, 0.8, 0.75));
+  highp vec3 directionalLightColor = uDirectionalLightColor;
+  highp vec3 directionalLightDirection = normalize(uDirectionalLightDirection);
 
   highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
 
   highp float directional = max(dot(transformedNormal.xyz, directionalLightDirection), 0.0);
-  vLighting = ambientLight + (directionalLightColor * directional);
+  vLighting = uAmbientColor + (directionalLightColor * directional);
 }
 `

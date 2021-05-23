@@ -1,5 +1,7 @@
 import Renderer from './Renderer'
 import GLObject from './GLObject'
+import AmbientLight from './Lights/AmbientLight'
+import DirectionalLight from './Lights/DirectionalLight'
 import events from 'events'
 
 class App extends events.EventEmitter {
@@ -12,6 +14,9 @@ class App extends events.EventEmitter {
     object2.translation.x = -3
     const object3 = new GLObject(this.renderer, require('~/assets/textures/Bricks/Bricks059_1K_Color.png'))
     object3.translation.x = 3
+
+    const ambientLight = new AmbientLight([.1, .1, .1])
+    this.dirLight = new DirectionalLight([1, 1, 1], [0.85, 0.8, 0.75])
 
     this.time = 0
 
@@ -29,6 +34,9 @@ class App extends events.EventEmitter {
           object.getObject(),
           object2.getObject(),
           object3.getObject()
+        ], [
+          ambientLight,
+          this.dirLight
         ])
 
         this.emit('update', {
