@@ -1,5 +1,6 @@
 # WebGL
 
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Barles/WebGL/CI)
 [![wakatime](https://wakatime.com/badge/github/Barles/WebGL.svg)](https://wakatime.com/badge/github/Barles/WebGL)
 
 ## Build Setup
