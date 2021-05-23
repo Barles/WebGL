@@ -27,7 +27,13 @@ export default {
   },
   mounted() {
     this.app = new App()
+    this.app.on('update', (update) => {
+      this.fps = update.fps
+    })
     this.fps = this.app.time
+  },
+  beforeDestroy() {
+    this.app = this.app.destroy()
   },
   methods: {
     toggleFS() {
@@ -52,7 +58,6 @@ export default {
       this.fs = !this.fs
     }
   }
-  // TODO Destroy app when unmounted (kill and free all things that have to)
 }
 </script>
 

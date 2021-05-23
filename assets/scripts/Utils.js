@@ -1,6 +1,5 @@
 export default {
   loadShader(gl, shaderType, source) {
-    console.log(source)
     const shader = gl.createShader(shaderType)
     gl.shaderSource(shader, source)
     gl.compileShader(shader)

@@ -92,6 +92,11 @@ class Renderer {
     return projectionMatrix
   }
 
+  destroy() {
+    this.gl = null
+    return null
+  }
+
   getGL() { return this.gl }
 }
 
