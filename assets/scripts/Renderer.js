@@ -43,9 +43,19 @@ class Renderer {
       this.gl.vertexAttribPointer(this.programInfo.attribLocations.vertexPosition, 3, this.gl.FLOAT, false, 0, 0)
       this.gl.enableVertexAttribArray(this.programInfo.attribLocations.vertexPosition)
 
-      this.gl.bindBuffer(this.gl.ARRAY_BUFFER, object.colorsBuffer)
-      this.gl.vertexAttribPointer(this.programInfo.attribLocations.vertexColor, 4, this.gl.FLOAT, false, 0, 0)
-      this.gl.enableVertexAttribArray(this.programInfo.attribLocations.vertexColor)
+      // this.gl.bindBuffer(this.gl.ARRAY_BUFFER, object.colorsBuffer)
+      // this.gl.vertexAttribPointer(this.programInfo.attribLocations.vertexColor, 4, this.gl.FLOAT, false, 0, 0)
+      // this.gl.enableVertexAttribArray(this.programInfo.attribLocations.vertexColor)
+
+      if(object.texture != null) {
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, object.uvsBuffer)
+        this.gl.vertexAttribPointer(this.programInfo.attribLocations.textureCoord, 2, this.gl.FLOAT, false, 0, 0)
+        this.gl.enableVertexAttribArray(this.programInfo.attribLocations.textureCoord)
+
+        this.gl.activeTexture(this.gl.TEXTURE0)
+        this.gl.bindTexture(this.gl.TEXTURE_2D, object.texture)
+        this.gl.uniform1i(this.programInfo.uniformLocations.uSampler, 0)
+      }
 
       this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, object.indicesBuffer)
       this.gl.drawElements(this.gl.TRIANGLES, 36, this.gl.UNSIGNED_SHORT, 0)
@@ -72,11 +82,12 @@ class Renderer {
       program: shaderProgram,
       attribLocations: {
         vertexPosition: this.gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
-        vertexColor: this.gl.getAttribLocation(shaderProgram, 'aVertexColor')
+        textureCoord: this.gl.getAttribLocation(shaderProgram, 'aTextureCoord')
       },
       uniformLocations: {
         projectionMatrix: this.gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
-        modelViewMatrix: this.gl.getUniformLocation(shaderProgram, 'uModelViewMatrix')
+        modelViewMatrix: this.gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
+        uSampler: this.gl.getUniformLocation(shaderProgram, 'uSampler')
       }
     }
     return programInfo
