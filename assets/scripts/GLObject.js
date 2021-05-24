@@ -1,7 +1,8 @@
-import Primitives from './Primitives'
+import Cube from './Primitives/Cube'
+import Plane from './Primitives/Plane'
 
 class GLObject {
-  constructor(renderer, texturePath) {
+  constructor(renderer, texturePath, type) {
     this.renderer = renderer
     this.verticesBuffer = null
     this.uvsBuffer = null
@@ -10,6 +11,21 @@ class GLObject {
     this.texture = null
     this.translation = { x: 0, y: 0, z: -3 }
     this.rotation = { x: 0, y: 0, z: 0 }
+    this.type = this.renderer.getGL().TRIANGLES
+
+    if (type == 'cube') {
+      this.object = Cube({
+        x: 0, y: 0, z: 0
+      }, {
+        x: 1, y: 1, z: 1
+      })
+    }
+
+    if (type == 'plane') {
+      this.type = this.renderer.getGL().LINE_STRIP
+      this.object = Plane(10, 1)
+      this.translation.z = -10
+    }
 
     this.addTexture(texturePath)
     this.fillVertices()
@@ -40,110 +56,27 @@ class GLObject {
   }
 
   fillVertices() {
-    const positions = Primitives.createCube({
-      x: 0, y: 0, z: 0
-    }, {
-      x: 1, y: 1, z: 1
-    })
     this.verticesBuffer = this.renderer.getGL().createBuffer()
     this.renderer.getGL().bindBuffer(this.renderer.getGL().ARRAY_BUFFER, this.verticesBuffer)
-    this.renderer.getGL().bufferData(this.renderer.getGL().ARRAY_BUFFER, new Float32Array(positions), this.renderer.getGL().STATIC_DRAW)
+    this.renderer.getGL().bufferData(this.renderer.getGL().ARRAY_BUFFER, new Float32Array(this.object.vertices), this.renderer.getGL().STATIC_DRAW)
   }
 
   fillUVS() {
-    const textureCoordinates = [
-      // Front
-      0.0,  0.0,
-      1.0,  0.0,
-      1.0,  1.0,
-      0.0,  1.0,
-      // Back
-      0.0,  0.0,
-      1.0,  0.0,
-      1.0,  1.0,
-      0.0,  1.0,
-      // Top
-      0.0,  0.0,
-      1.0,  0.0,
-      1.0,  1.0,
-      0.0,  1.0,
-      // Bottom
-      0.0,  0.0,
-      1.0,  0.0,
-      1.0,  1.0,
-      0.0,  1.0,
-      // Right
-      0.0,  0.0,
-      1.0,  0.0,
-      1.0,  1.0,
-      0.0,  1.0,
-      // Left
-      0.0,  0.0,
-      1.0,  0.0,
-      1.0,  1.0,
-      0.0,  1.0,
-    ];
     this.uvsBuffer = this.renderer.getGL().createBuffer()
     this.renderer.getGL().bindBuffer(this.renderer.getGL().ARRAY_BUFFER, this.uvsBuffer)
-    this.renderer.getGL().bufferData(this.renderer.getGL().ARRAY_BUFFER, new Float32Array(textureCoordinates), this.renderer.getGL().STATIC_DRAW)
+    this.renderer.getGL().bufferData(this.renderer.getGL().ARRAY_BUFFER, new Float32Array(this.object.uvs), this.renderer.getGL().STATIC_DRAW)
   }
 
   fillIndices() {
-    const indices = [
-      0,  1,  2,      0,  2,  3,    // avant
-      4,  5,  6,      4,  6,  7,    // arrière
-      8,  9,  10,     8,  10, 11,   // haut
-      12, 13, 14,     12, 14, 15,   // bas
-      16, 17, 18,     16, 18, 19,   // droite
-      20, 21, 22,     20, 22, 23,   // gauche
-    ]
     this.indicesBuffer = this.renderer.getGL().createBuffer()
     this.renderer.getGL().bindBuffer(this.renderer.getGL().ELEMENT_ARRAY_BUFFER, this.indicesBuffer)
-    this.renderer.getGL().bufferData(this.renderer.getGL().ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), this.renderer.getGL().STATIC_DRAW)
+    this.renderer.getGL().bufferData(this.renderer.getGL().ELEMENT_ARRAY_BUFFER, new Uint16Array(this.object.indices), this.renderer.getGL().STATIC_DRAW)
   }
 
   fillNormals() {
-    const normals = [
-      // Front
-       0.0,  0.0,  1.0,
-       0.0,  0.0,  1.0,
-       0.0,  0.0,  1.0,
-       0.0,  0.0,  1.0,
-
-      // Back
-       0.0,  0.0, -1.0,
-       0.0,  0.0, -1.0,
-       0.0,  0.0, -1.0,
-       0.0,  0.0, -1.0,
-
-      // Top
-       0.0,  1.0,  0.0,
-       0.0,  1.0,  0.0,
-       0.0,  1.0,  0.0,
-       0.0,  1.0,  0.0,
-
-      // Bottom
-       0.0, -1.0,  0.0,
-       0.0, -1.0,  0.0,
-       0.0, -1.0,  0.0,
-       0.0, -1.0,  0.0,
-
-      // Right
-       1.0,  0.0,  0.0,
-       1.0,  0.0,  0.0,
-       1.0,  0.0,  0.0,
-       1.0,  0.0,  0.0,
-
-      // Left
-      -1.0,  0.0,  0.0,
-      -1.0,  0.0,  0.0,
-      -1.0,  0.0,  0.0,
-      -1.0,  0.0,  0.0
-    ]
-
     this.normalsBuffer = this.renderer.getGL().createBuffer();
     this.renderer.getGL().bindBuffer(this.renderer.getGL().ARRAY_BUFFER, this.normalsBuffer);
-    this.renderer.getGL().bufferData(this.renderer.getGL().ARRAY_BUFFER, new Float32Array(normals), this.renderer.getGL().STATIC_DRAW);
+    this.renderer.getGL().bufferData(this.renderer.getGL().ARRAY_BUFFER, new Float32Array(this.object.normals), this.renderer.getGL().STATIC_DRAW);
   }
 
   getObject() {
@@ -154,7 +87,9 @@ class GLObject {
       normalsBuffer: this.normalsBuffer,
       texture: this.texture,
       translation: this.translation,
-      rotation: this.rotation
+      rotation: this.rotation,
+      datas: this.object,
+      type: this.type
     }
   }
 }

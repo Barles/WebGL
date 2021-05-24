@@ -9,10 +9,10 @@ class App extends events.EventEmitter {
     super()
     this.renderer = new Renderer()
 
-    const object = new GLObject(this.renderer, require('~/assets/textures/Bricks/Bricks059_1K_Color.png'))
-    const object2 = new GLObject(this.renderer, require('~/assets/textures/Bricks/Bricks059_1K_Color.png'))
+    const object = new GLObject(this.renderer, require('~/assets/textures/Bricks/Bricks059_1K_Color.png'), 'plane')
+    const object2 = new GLObject(this.renderer, require('~/assets/textures/Bricks/Bricks059_1K_Color.png'), 'cube')
     object2.translation.x = -3
-    const object3 = new GLObject(this.renderer, require('~/assets/textures/Bricks/Bricks059_1K_Color.png'))
+    const object3 = new GLObject(this.renderer, require('~/assets/textures/Bricks/Bricks059_1K_Color.png'), 'cube')
     object3.translation.x = 3
 
     const ambientLight = new AmbientLight([.1, .1, .1])

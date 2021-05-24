@@ -73,7 +73,7 @@ class Renderer {
       this.gl.uniformMatrix4fv(this.programInfo.uniformLocations.normalMatrix, false, normalMatrix)
 
       this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, object.indicesBuffer)
-      this.gl.drawElements(this.gl.TRIANGLES, 36, this.gl.UNSIGNED_SHORT, 0)
+      this.gl.drawElements(object.type, object.datas.indices.length, this.gl.UNSIGNED_SHORT, 0)
     }
   }
 
